@@ -1,0 +1,17 @@
+
+Copyright © 2025 Bala Mrunal Nuguri
+
+This project, titled "M-realm", and all associated files, source code, designs, textual content, emotional frameworks, and documentation,
+are the sole intellectual property of Bala Mrunal Nuguri.
+
+Unauthorized copying, distribution, modification, or commercial use of any part of this project is strictly prohibited without explicit
+written consent from the creator.
+
+You may view, explore, or reference this project for educational or inspirational purposes, provided full credit is given to the creator,
+and no derivative or commercial work is made from it.
+
+Violation of these terms may result in legal action under intellectual property protection laws.
+
+This license is custom and supersedes standard open-source licenses where applicable.
+
+Creator and Visionary: Bala Mrunal Nuguri

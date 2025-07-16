@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>M-realm: Portal</title>
+  <title>M-realm: Portal (Mobile)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#00ffff"/>
   <link rel="manifest" href="manifest.json" />
@@ -18,55 +17,48 @@
   </script>
   <style>
     body {
+      max-width: 480px;
+      margin: auto;
+      padding: 1.5em;
       background: #000;
       color: #00ffff;
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      padding: 2em;
     }
-    h1 { color: #00ffe0; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5em;
-      margin-top: 2em;
+    h1 {
+      font-size: 1.8em;
+      color: #00ffe0;
     }
     .tool {
+      display: block;
       background: #111;
-      padding: 1.5em;
       border-radius: 15px;
+      padding: 1.2em;
+      text-align: center;
+      font-size: 1.1em;
+      text-decoration: none;
+      color: #00ffff;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+      margin-top: 1.2em;
       transition: all 0.3s ease;
     }
     .tool:hover {
       background: #222;
-      transform: translateY(-5px);
-    }
-    a {
-      color: #00ffff;
-      text-decoration: none;
-      font-size: 1.1em;
     }
     footer {
-      margin-top: 4em;
+      margin-top: 3em;
       font-size: 0.9em;
-      color: #888;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
-  <h1>M-realm Tools · Bala Mrunal Nuguri</h1>
-  <div class="grid">
-    <div class="tool"><a href="emotion.html">🧠 Emotion Classifier</a></div>
-    <div class="tool"><a href="mirror.html">🎥 Real-Time Mirror</a></div>
-    <div class="tool"><a href="heartbeat.html">💓 Heartbeat AI</a></div>
-    <div class="tool"><a href="memory.html">🧬 Memory Log</a></div>
-    <div class="tool"><a href="hybrid.html">🤖 Hybrid Analysis</a></div>
-    <div class="tool"><a href="action.html">📍 Action Logger</a></div>
-    <div class="tool"><a href="alert.html">📡 Alert + Care Plan</a></div>
-    <div class="tool"><a href="contact.html">📨 Contact</a></div>
-  </div>
-  <footer>© 2025 Bala Mrunal Nuguri · M-realm</footer>
+  <h1>Welcome to M-realm</h1>
+  <a class="tool" href="emotion.html">🧠 Emotion Detector</a>
+  <a class="tool" href="mirror.html">🪞 Mirror Vision</a>
+  <a class="tool" href="heartbeat.html">💓 Heartbeat Reader</a>
+  <a class="tool" href="alert.html">📡 Alert & Assist</a>
+  <a class="tool" href="contact.html">📬 Contact Me</a>
+  <footer>Made by Bala Mrunal Nuguri • mrealm.ai</footer>
 </body>
 </html>
-
-

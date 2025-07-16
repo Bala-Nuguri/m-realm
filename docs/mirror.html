@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>M-realm Real-Time Mirror</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { background: black; color: white; font-family: Arial, sans-serif; text-align: center; padding: 2em; }
+    h2 { color: #00ffff; }
+    #mirror { width: 320px; height: 240px; border: 3px solid #00ffff; margin-bottom: 1em; }
+    textarea {
+      width: 80%%; height: 100px; font-size: 1em;
+      border-radius: 10px; padding: 1em; margin: 1em auto; border: none;
+    }
+    button {
+      background: #00ffff; color: black;
+      padding: 10px 20px; border: none; border-radius: 10px;
+      cursor: pointer; font-size: 1em;
+    }
+    #result, #suggestion { margin-top: 1em; color: #00ffaa; font-size: 1.1em; }
+  </style>
+</head>
+<body>
+  <h2>🪞 M-realm Real-Time Mirror</h2>
+  <p>Speak, write, and reflect — M-realm watches and listens for emotional alignment.</p>
+
+  <video id="mirror" autoplay muted></video><br>
+  <button onclick="startMirror()">Start Mirror</button>
+
+  <textarea id="inputText" placeholder="How do you feel right now..."></textarea><br>
+  <button onclick="analyzeEverything()">Analyze Mirror</button>
+
+  <div id="result"></div>
+  <div id="suggestion"></div>
+
+  <script>
+    const suggestions = {
+      joy: "🌟 Radiate your energy. Share a smile today.",
+      sadness: "🌧️ It's okay to slow down. Let the tears cleanse.",
+      distress: "🆘 You are seen. You are not alone.",
+      anxiety: "🌬️ Breathe. Control what you can. Release the rest.",
+      anger: "🔥 Channel your fire into movement or music.",
+      bond: "💞 You're tuned into love. Send someone kindness.",
+      neutral: "🕊️ You are grounded. This moment is yours."
+    };
+
+    const emotionLists = {
+      distress: ["hurt", "empty", "lost", "pain", "hopeless", "worthless"],
+      joy: ["happy", "excited", "grateful", "cheerful", "blessed"],
+      sadness: ["sad", "lonely", "regret", "cry", "depressed"],
+      bond: ["love", "connection", "soulmate", "heartfelt"],
+      anxiety: ["anxious", "panic", "nervous", "fear", "stress"],
+      anger: ["angry", "mad", "furious", "rage"]
+    };
+
+    let audioContext, analyser, dataArray, rms = 0;
+
+    function startMirror() {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+          document.getElementById("mirror").srcObject = stream;
+
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          const microphone = audioContext.createMediaStreamSource(stream);
+          microphone.connect(analyser);
+          analyser.fftSize = 2048;
+          dataArray = new Uint8Array(analyser.fftSize);
+          monitorVolume();
+        })
+        .catch(() => {
+          alert("Camera/Microphone permission denied.");
+        });
+    }
+
+    function monitorVolume() {
+      analyser.getByteTimeDomainData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const deviation = dataArray[i] - 128;
+        sum += deviation * deviation;
+      }
+      rms = Math.sqrt(sum / dataArray.length);
+      requestAnimationFrame(monitorVolume);
+    }
+
+    function getTextEmotion(text) {
+      text = text.toLowerCase();
+      for (let [emotion, words] of Object.entries(emotionLists)) {
+        if (words.some(word => text.includes(word))) {
+          return emotion;
+        }
+      }
+      return "neutral";
+    }
+
+    function getVoiceEmotion(rms) {
+      if (rms > 30) return "anger";
+      if (rms > 15) return "anxiety";
+      if (rms > 5) return "joy";
+      if (rms > 2) return "sadness";
+      return "neutral";
+    }
+
+    function analyzeEverything() {
+      const text = document.getElementById("inputText").value;
+      const textEmotion = getTextEmotion(text);
+      const voiceEmotion = getVoiceEmotion(rms);
+
+      let finalEmotion = "neutral";
+      if (textEmotion === voiceEmotion) {
+        finalEmotion = textEmotion;
+      } else if (textEmotion !== "neutral") {
+        finalEmotion = textEmotion;
+      } else {
+        finalEmotion = voiceEmotion;
+      }
+
+      document.getElementById("result").innerText = `🧠 Text: ${textEmotion.toUpperCase()} | 🎤 Voice: ${voiceEmotion.toUpperCase()}`;
+      document.getElementById("suggestion").innerText = `💡 Suggestion: ${suggestions[finalEmotion]}`;
+    }
+  </script>
+</body>
+</html>

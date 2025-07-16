@@ -2,49 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>M-realm Real-Time Mirror</title>
+  <title>M-realm Mirror with Face Detection</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
   <style>
-    body { background: black; color: white; font-family: Arial, sans-serif; text-align: center; padding: 2em; }
+    body { background: black; color: white; font-family: Arial, sans-serif; text-align: center; padding: 1em; }
     h2 { color: #00ffff; }
-    #mirror { width: 320px; height: 240px; border: 3px solid #00ffff; margin-bottom: 1em; }
+    video, canvas { border: 3px solid #00ffff; border-radius: 10px; margin-bottom: 1em; }
     textarea {
       width: 80%%; height: 100px; font-size: 1em;
       border-radius: 10px; padding: 1em; margin: 1em auto; border: none;
     }
     button {
-      background: #00ffff; color: black;
-      padding: 10px 20px; border: none; border-radius: 10px;
-      cursor: pointer; font-size: 1em;
+      background: #00ffff; color: black; padding: 10px 20px;
+      border: none; border-radius: 10px; cursor: pointer; font-size: 1em;
     }
-    #result, #suggestion { margin-top: 1em; color: #00ffaa; font-size: 1.1em; }
+    #results, #suggestion { margin-top: 1em; color: #00ffaa; font-size: 1.1em; }
   </style>
 </head>
 <body>
-  <h2>🪞 M-realm Real-Time Mirror</h2>
-  <p>Speak, write, and reflect — M-realm watches and listens for emotional alignment.</p>
+  <h2>M-realm Mirror: Face + Voice + Text</h2>
+  <p>Triple emotion detection: facial expression, voice tone, and written word.</p>
 
-  <video id="mirror" autoplay muted></video><br>
+  <video id="video" width="320" height="240" autoplay muted></video>
+  <canvas id="overlay" width="320" height="240" style="position:absolute; left:50%%; transform:translateX(-50%%);"></canvas><br>
   <button onclick="startMirror()">Start Mirror</button>
 
-  <textarea id="inputText" placeholder="How do you feel right now..."></textarea><br>
-  <button onclick="analyzeEverything()">Analyze Mirror</button>
+  <textarea id="inputText" placeholder="Write how you feel..."></textarea><br>
+  <button onclick="analyze()">Analyze All</button>
 
-  <div id="result"></div>
+  <div id="results"></div>
   <div id="suggestion"></div>
 
   <script>
-    const suggestions = {
-      joy: "🌟 Radiate your energy. Share a smile today.",
-      sadness: "🌧️ It's okay to slow down. Let the tears cleanse.",
-      distress: "🆘 You are seen. You are not alone.",
-      anxiety: "🌬️ Breathe. Control what you can. Release the rest.",
-      anger: "🔥 Channel your fire into movement or music.",
-      bond: "💞 You're tuned into love. Send someone kindness.",
-      neutral: "🕊️ You are grounded. This moment is yours."
-    };
+    let video = document.getElementById("video");
+    let overlay = document.getElementById("overlay");
+    let ctx = overlay.getContext("2d");
+    let audioContext, analyser, dataArray, rms = 0, faceEmotion = "neutral";
 
-    const emotionLists = {
+    const emotionDict = {
       distress: ["hurt", "empty", "lost", "pain", "hopeless", "worthless"],
       joy: ["happy", "excited", "grateful", "cheerful", "blessed"],
       sadness: ["sad", "lonely", "regret", "cry", "depressed"],
@@ -53,24 +49,46 @@
       anger: ["angry", "mad", "furious", "rage"]
     };
 
-    let audioContext, analyser, dataArray, rms = 0;
+    const suggestions = {
+      joy: "🌟 Radiate joy. Share a smile today.",
+      sadness: "🌧️ Slow down. Let emotions pass.",
+      distress: "🆘 You're not alone. Breathe deeply.",
+      anxiety: "🌬️ Focus on the now. One breath at a time.",
+      anger: "🔥 Use movement or music to release.",
+      bond: "💞 Express appreciation to someone close.",
+      neutral: "🕊️ Ground yourself. This moment is yours."
+    };
 
-    function startMirror() {
+    async function startMirror() {
+      await Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri("https://cdn.jsdelivr.net/npm/face-api.js/models"),
+        faceapi.nets.faceExpressionNet.loadFromUri("https://cdn.jsdelivr.net/npm/face-api.js/models")
+      ]);
+
       navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(stream => {
-          document.getElementById("mirror").srcObject = stream;
+          video.srcObject = stream;
 
           audioContext = new (window.AudioContext || window.webkitAudioContext)();
           analyser = audioContext.createAnalyser();
-          const microphone = audioContext.createMediaStreamSource(stream);
-          microphone.connect(analyser);
+          const mic = audioContext.createMediaStreamSource(stream);
+          mic.connect(analyser);
           analyser.fftSize = 2048;
           dataArray = new Uint8Array(analyser.fftSize);
           monitorVolume();
+
+          setInterval(async () => {
+            const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+            ctx.clearRect(0, 0, overlay.width, overlay.height);
+            if (detections) {
+              faceapi.draw.drawDetections(overlay, detections);
+              let expr = detections.expressions;
+              let max = Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b);
+              faceEmotion = max;
+            }
+          }, 1000);
         })
-        .catch(() => {
-          alert("Camera/Microphone permission denied.");
-        });
+        .catch(() => alert("Camera/Mic permission needed."));
     }
 
     function monitorVolume() {
@@ -86,7 +104,7 @@
 
     function getTextEmotion(text) {
       text = text.toLowerCase();
-      for (let [emotion, words] of Object.entries(emotionLists)) {
+      for (let [emotion, words] of Object.entries(emotionDict)) {
         if (words.some(word => text.includes(word))) {
           return emotion;
         }
@@ -102,22 +120,24 @@
       return "neutral";
     }
 
-    function analyzeEverything() {
+    function analyze() {
       const text = document.getElementById("inputText").value;
       const textEmotion = getTextEmotion(text);
       const voiceEmotion = getVoiceEmotion(rms);
+      const faceFinal = faceEmotion === "happy" ? "joy" :
+                        faceEmotion === "angry" ? "anger" :
+                        faceEmotion === "sad" ? "sadness" :
+                        faceEmotion;
 
-      let finalEmotion = "neutral";
-      if (textEmotion === voiceEmotion) {
-        finalEmotion = textEmotion;
-      } else if (textEmotion !== "neutral") {
-        finalEmotion = textEmotion;
-      } else {
-        finalEmotion = voiceEmotion;
-      }
+      let result = `🧠 Text: ${textEmotion.toUpperCase()} | 🎤 Voice: ${voiceEmotion.toUpperCase()} | 🧍‍♂️ Face: ${faceFinal.toUpperCase()}`;
+      let final = [textEmotion, voiceEmotion, faceFinal].filter(e => e !== "neutral")[0] || "neutral";
+      document.getElementById("results").innerText = result;
+      document.getElementById("suggestion").innerText = `💡 Suggestion: ${suggestions[final]}`;
 
-      document.getElementById("result").innerText = `🧠 Text: ${textEmotion.toUpperCase()} | 🎤 Voice: ${voiceEmotion.toUpperCase()}`;
-      document.getElementById("suggestion").innerText = `💡 Suggestion: ${suggestions[finalEmotion]}`;
+      // Memory logging
+      const history = JSON.parse(localStorage.getItem("emotionHistory") || "[]");
+      history.push({ timestamp: new Date().toISOString(), emotion: final, source: "mirror" });
+      localStorage.setItem("emotionHistory", JSON.stringify(history.slice(-10)));
     }
   </script>
 </body>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>M-realm Emotion-Based Suggestions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { background: #0f0f0f; color: white; font-family: Arial, sans-serif; text-align: center; padding: 2em; }
+    h2 { color: #61dafb; }
+    textarea {
+      width: 80%%; height: 100px; padding: 1em;
+      font-size: 1em; border-radius: 8px; border: none;
+      margin-bottom: 1em;
+    }
+    button {
+      background-color: #61dafb; color: black;
+      padding: 0.8em 2em; border: none; border-radius: 8px;
+      cursor: pointer; font-size: 1em;
+    }
+    #actionBox {
+      margin-top: 1.5em;
+      font-size: 1.2em;
+      color: #00ffae;
+    }
+  </style>
+</head>
+<body>
+  <h2>M-realm Emotion-to-Action Guide</h2>
+  <p>Tell M-realm how you feel, and it will offer something kind and helpful.</p>
+
+  <textarea id="inputText" placeholder="Type how you feel..."></textarea><br>
+  <button onclick="suggestAction()">Suggest Action</button>
+
+  <div id="actionBox"></div>
+
+  <script>
+    const suggestions = {
+      joy: [
+        "🎉 Celebrate your wins! Share your joy with someone you love.",
+        "📝 Write a gratitude journal to lock in your happiness.",
+        "💃 Play your favorite song and dance!"
+      ],
+      sadness: [
+        "🌤️ Take a short walk and let the sky hold your feelings.",
+        "📞 Call a close friend — even if it's just to hear them breathe.",
+        "🖋️ Write a letter to yourself. You’ll be surprised how kind you can be."
+      ],
+      distress: [
+        "🫂 You matter. Breathe. You are here. That’s enough for now.",
+        "📥 Pause all tasks. Drink water. Stretch. The world can wait.",
+        "🌱 Try grounding: name 3 things you can see, hear, and feel."
+      ],
+      anxiety: [
+        "🧘 Try box breathing — inhale 4s, hold 4s, exhale 4s, hold 4s.",
+        "🎧 Listen to calming music — let sound reset your heartbeat.",
+        "📵 Step away from screens. Let your eyes breathe too."
+      ],
+      anger: [
+        "🥊 Punch a pillow or do 10 pushups to channel the fire.",
+        "🎤 Scream into a pillow. It’s okay to roar in silence.",
+        "✍️ Journal your rage. Burn the page after. It helps."
+      ],
+      bond: [
+        "💌 Send a message to someone you love, no explanation needed.",
+        "🧩 Reflect on what connection means to you.",
+        "🎥 Watch a film that celebrates closeness."
+      ],
+      neutral: [
+        "🌿 Breathe deeply. Feel your presence in the moment.",
+        "🛏️ Rest or stretch your body. Check in with your needs.",
+        "💭 Let your mind wander and write down what it finds."
+      ]
+    };
+
+    const emotionLists = {
+      distress: ["help", "hurt", "alone", "empty", "dark", "hopeless", "lost", "pain", "worthless"],
+      joy: ["happy", "grateful", "smile", "excited", "joy", "cheerful", "blessed"],
+      sadness: ["sad", "depressed", "missing", "lonely", "tired", "regret", "cry", "tears"],
+      bond: ["love", "connection", "soulmate", "attached", "heartfelt"],
+      anxiety: ["anxious", "nervous", "panic", "fear", "stress", "worry"],
+      anger: ["angry", "hate", "rage", "mad", "frustrated"]
+    };
+
+    function getEmotion(text) {
+      text = text.toLowerCase();
+      for (let [emotion, words] of Object.entries(emotionLists)) {
+        if (words.some(word => text.includes(word))) {
+          return emotion;
+        }
+      }
+      return "neutral";
+    }
+
+    function suggestAction() {
+      const text = document.getElementById("inputText").value;
+      const emotion = getEmotion(text);
+      const suggestionList = suggestions[emotion];
+      const randomSuggestion = suggestionList[Math.floor(Math.random() * suggestionList.length)];
+      document.getElementById("actionBox").innerText = `🧠 Emotion: ${emotion.toUpperCase()}
+💡 Suggestion: ${randomSuggestion}`;
+    }
+  </script>
+</body>
+</html>

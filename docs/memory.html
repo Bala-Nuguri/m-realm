@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>M-realm Emotion Memory Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { background: #0f0f0f; color: white; font-family: Arial, sans-serif; text-align: center; padding: 2em; }
+    h2 { color: #61dafb; }
+    textarea {
+      width: 80%%; height: 100px; padding: 1em;
+      font-size: 1em; border-radius: 8px; border: none;
+      margin-bottom: 1em;
+    }
+    button {
+      background-color: #61dafb; color: black;
+      padding: 0.8em 2em; border: none; border-radius: 8px;
+      cursor: pointer; font-size: 1em;
+    }
+    #alert, #history { margin-top: 1.5em; }
+    .entry { margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <h2>M-realm Emotion Memory Tracker</h2>
+  <p>Write what you feel. M-realm remembers and watches over you.</p>
+
+  <textarea id="inputText" placeholder="Share your thoughts..."></textarea><br>
+  <button onclick="logEmotion()">Log Emotion</button>
+
+  <div id="alert"></div>
+  <div id="history"></div>
+
+  <script>
+    const emotionLists = {
+      distress: ["help", "hurt", "alone", "empty", "dark", "hopeless", "lost", "pain", "worthless"],
+      joy: ["happy", "grateful", "smile", "excited", "joy", "love life", "cheerful"],
+      sadness: ["sad", "depressed", "missing", "lonely", "tired", "regret", "cry", "tears"],
+      bond: ["love", "connection", "soulmate", "attached"],
+      anxiety: ["anxious", "nervous", "panic", "fear", "stress", "worry"],
+      anger: ["angry", "hate", "rage", "mad", "frustrated"]
+    };
+
+    function getEmotion(text) {
+      text = text.toLowerCase();
+      for (let [emotion, words] of Object.entries(emotionLists)) {
+        if (words.some(word => text.includes(word))) {
+          return emotion;
+        }
+      }
+      return "neutral";
+    }
+
+    function logEmotion() {
+      const text = document.getElementById("inputText").value;
+      const emotion = getEmotion(text);
+      const now = new Date().toLocaleString();
+      const entry = { timestamp: now, emotion };
+
+      let history = JSON.parse(localStorage.getItem("mrealmHistory")) || [];
+      history.unshift(entry); // Add to beginning
+      history = history.slice(0, 10); // Keep last 10
+      localStorage.setItem("mrealmHistory", JSON.stringify(history));
+
+      document.getElementById("inputText").value = "";
+      showHistory(history);
+      checkForAlerts(history);
+    }
+
+    function showHistory(history) {
+      const historyDiv = document.getElementById("history");
+      historyDiv.innerHTML = "<h3>🧠 Memory</h3>" + history.map(entry =>
+        `<div class="entry">[${entry.timestamp}] → ${entry.emotion}</div>`
+      ).join("");
+    }
+
+    function checkForAlerts(history) {
+      const alertDiv = document.getElementById("alert");
+      const recent = history.slice(0, 5).map(e => e.emotion);
+      const distressing = ["distress", "sadness", "anxiety", "anger"];
+      const count = recent.filter(e => distressing.includes(e)).length;
+
+      if (count >= 3) {
+        alertDiv.innerHTML = "⚠️ You’ve felt low multiple times recently. Take a break or talk to someone 🫂";
+      } else if (recent[0] === "joy" && count === 0) {
+        alertDiv.innerHTML = "🌈 Beautiful energy! You’ve been radiating positivity ✨";
+      } else {
+        alertDiv.innerHTML = "";
+      }
+    }
+
+    // Load existing history on page load
+    window.onload = () => {
+      const existing = JSON.parse(localStorage.getItem("mrealmHistory")) || [];
+      showHistory(existing);
+      checkForAlerts(existing);
+    };
+  </script>
+</body>
+</html>

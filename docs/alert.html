@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>M-realm Care Plan & Alert</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      background: #111;
+      color: #00ffff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 2em;
+    }
+    h1 { color: #00ffe0; }
+    .log {
+      background: #1a1a1a;
+      padding: 1.5em;
+      border-radius: 10px;
+      margin-top: 1em;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 1em;
+      color: #ffffff;
+    }
+    .btn {
+      background: #00ffe0;
+      border: none;
+      padding: 0.7em 1.5em;
+      border-radius: 10px;
+      font-size: 1em;
+      color: black;
+      margin: 1em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>📡 M-realm Emotional Alert & Care</h1>
+  <p>Generate a care response when a soul is consistently in need.</p>
+  <button class="btn" onclick="generateCarePlan()">Generate Care Plan</button>
+  <div id="planBox" class="log">🧠 Waiting for data...</div>
+
+  <script>
+    const responses = {
+      distress: [
+        "Talk to someone you trust. If unavailable, try journaling immediately.",
+        "Drink water, sit upright, and take 3 deep breaths.",
+        "Visualize a safe place — real or imaginary — and ground yourself."
+      ],
+      sadness: [
+        "Put on calming music or nature sounds.",
+        "Go for a short walk or stretch your body.",
+        "Try listing 3 things you’ve survived before. You’re resilient."
+      ],
+      anxiety: [
+        "Close your eyes and count backward from 20, slowly.",
+        "Hold an ice cube or run cold water on your hands.",
+        "Avoid caffeine. Drink herbal tea or water."
+      ],
+      anger: [
+        "Do 20 jumping jacks or shadowbox to release energy.",
+        "Write a letter (you won’t send) to express what upset you.",
+        "Breathe in 4 seconds, hold 4, out 4, pause 4 (box breathing)."
+      ],
+      neutral: [
+        "Light a candle, breathe deeply, and just exist for 1 minute.",
+        "Listen to a favorite memory song. Let it take you back.",
+        "Compliment yourself out loud, even if you don’t feel like it."
+      ],
+      bond: [
+        "Text someone a kind message, or thank them silently.",
+        "Hug something — a pillow, a person, or even your own arms.",
+        "Recall a time you were truly loved — even if brief."
+      ],
+      joy: [
+        "Share your joy. Someone needs your smile today.",
+        "Dance for 30 seconds. Right now.",
+        "Record a 10-sec gratitude voice note — for future you."
+      ]
+    };
+
+    function generateCarePlan() {
+      const memory = JSON.parse(localStorage.getItem("emotionHistory") || "[]");
+      if (memory.length === 0) {
+        document.getElementById("planBox").innerText = "No emotional memory found.";
+        return;
+      }
+
+      const recent = memory.slice(-5).map(e => e.emotion);
+      const dominant = recent.sort((a,b) =>
+        recent.filter(v => v===a).length - recent.filter(v => v===b).length
+      ).pop();
+
+      const adviceSet = responses[dominant] || responses.neutral;
+      const chosen = adviceSet[Math.floor(Math.random() * adviceSet.length)];
+
+      document.getElementById("planBox").innerHTML = `💬 Dominant Emotion: <strong>${dominant.toUpperCase()}</strong><br/><br/>🧭 Care Suggestion:<br/>${chosen}`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>M-realm Emotion Detector</title>
+  <style>
+    body { background: #121212; color: white; font-family: Arial, sans-serif; text-align: center; padding: 2em; }
+    h2 { color: #61dafb; }
+    textarea {
+      width: 80%%; height: 120px; padding: 1em;
+      font-size: 1em; border-radius: 8px; border: none;
+      margin-bottom: 1em;
+    }
+    button {
+      background-color: #61dafb; color: black;
+      padding: 0.8em 2em; border: none; border-radius: 8px;
+      cursor: pointer; font-size: 1em;
+    }
+    #output {
+      margin-top: 2em;
+      font-size: 1.2em;
+      color: #00ffae;
+    }
+  </style>
+</head>
+<body>
+  <h2>M-realm Emotion Detector</h2>
+  <p>Type how you feel. M-realm will sense it...</p>
+  <textarea id="inputText" placeholder="Enter your thoughts..."></textarea><br>
+  <button onclick="detectEmotion()">Analyze Emotion</button>
+  <div id="output"></div>
+
+  <script>
+    function detectEmotion() {
+      const input = document.getElementById('inputText').value.toLowerCase();
+      let emotion = "neutral";
+
+      if (input.includes("help") || input.includes("hurt") || input.includes("alone")) {
+        emotion = "Distress detected. You're not alone. 💙";
+      } else if (input.includes("happy") || input.includes("grateful")) {
+        emotion = "Positive energy flowing through you! ☀️";
+      } else if (input.includes("sad") || input.includes("lost")) {
+        emotion = "Sadness felt. M-realm is with you. 💧";
+      } else if (input.includes("love") || input.includes("connection")) {
+        emotion = "Love and bond detected. ❤️";
+      } else if (input.includes("anxious") || input.includes("nervous")) {
+        emotion = "Anxiety picked up. Breathe with M-realm. 🌬️";
+      }
+
+      document.getElementById('output').innerText = emotion;
+    }
+  </script>
+</body>
+</html>

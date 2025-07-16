@@ -1,52 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>M-realm – Entering the Realm</title>
-  <link rel="icon" href="favicon.png" type="image/png">
+  <meta charset="UTF-8" />
+  <title>M-realm: Unified Tools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: radial-gradient(ellipse at center, #0f0c29, #302b63, #24243e);
-      color: #fff;
+      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      overflow: hidden;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      text-align: center;
+      padding: 2em;
     }
-    .pulse {
-      font-size: 3em;
+    h1 {
+      font-size: 2.5em;
+      color: #00ffff;
+      margin-bottom: 0.2em;
+    }
+    p {
+      font-size: 1.1em;
+      margin-bottom: 2em;
+      color: #cfd8dc;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5em;
+      max-width: 900px;
+      margin: auto;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #00ffff;
+      border-radius: 15px;
+      padding: 1.5em;
+      transition: 0.3s;
+    }
+    .card:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-5px);
+    }
+    .card a {
+      text-decoration: none;
+      color: #00ffff;
       font-weight: bold;
-      color: #61dafb;
-      animation: pulse 2s infinite;
     }
-    .subtitle {
-      margin-top: 1em;
-      font-size: 1.2em;
-      color: #aaa;
-      animation: fadeIn 2s ease-in-out forwards;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-    }
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+    footer {
+      margin-top: 3em;
+      font-size: 0.9em;
+      color: #90a4ae;
     }
   </style>
-  <script>
-    setTimeout(function() {
-      window.location.href = "home.html";
-    }, 4000); // Redirect after 4 seconds
-  </script>
 </head>
 <body>
-  <div class="pulse">M-realm</div>
-  <div class="subtitle">Entering the realm...</div>
+  <h1>🌌 M-realm Portal</h1>
+  <p>Every emotion is a signal. Every signal has a tool. Welcome to your realm of reflection and healing.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Emotion Detector</h3>
+      <p>Analyze written emotions from text alone.</p>
+      <a href="emotion.html">Open Tool</a>
+    </div>
+    <div class="card">
+      <h3>Text + Voice Hybrid</h3>
+      <p>Analyze text & voice together for deeper insight.</p>
+      <a href="hybrid.html">Open Tool</a>
+    </div>
+    <div class="card">
+      <h3>Memory & Alerts</h3>
+      <p>Track emotional patterns & receive gentle warnings.</p>
+      <a href="memory.html">Open Tool</a>
+    </div>
+    <div class="card">
+      <h3>Emotion → Action</h3>
+      <p>Let emotions guide positive, healing actions.</p>
+      <a href="action.html">Open Tool</a>
+    </div>
+    <div class="card">
+      <h3>Real-Time Mirror</h3>
+      <p>Face, voice, and words in one mirror. Self-aware AI.</p>
+      <a href="mirror.html">Open Tool</a>
+    </div>
+    <div class="card">
+      <h3>Contact Bala Mrunal Nuguri</h3>
+      <p>Reach out with love, feedback, or ideas.</p>
+      <a href="contact.html">Contact Now</a>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Bala Mrunal Nuguri · M-realm.ai · AI with Compassion
+  </footer>
 </body>
 </html>

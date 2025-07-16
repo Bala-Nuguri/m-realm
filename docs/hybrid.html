@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>M-realm Hybrid Emotion Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { background: #0f0f0f; color: white; font-family: Arial, sans-serif; text-align: center; padding: 2em; }
+    h2 { color: #61dafb; }
+    textarea {
+      width: 80%%; height: 100px; padding: 1em;
+      font-size: 1em; border-radius: 8px; border: none;
+      margin-bottom: 1em;
+    }
+    button {
+      background-color: #61dafb; color: black;
+      padding: 0.8em 2em; border: none; border-radius: 8px;
+      cursor: pointer; font-size: 1em;
+    }
+    .section { margin-top: 2em; }
+    #output { font-size: 1.2em; margin-top: 1em; color: #00ffae; }
+  </style>
+</head>
+<body>
+  <h2>M-realm Hybrid Emotion Intelligence</h2>
+  <p>Enter your thoughts and speak out loud — M-realm will sense both.</p>
+
+  <div class="section">
+    <textarea id="inputText" placeholder="Type what you feel..."></textarea><br>
+    <button onclick="analyzeHybrid()">Analyze Emotion</button>
+  </div>
+
+  <div class="section">
+    <button onclick="startListening()">🎙️ Start Voice Analysis</button>
+    <p id="voiceStatus">Voice: Not started</p>
+  </div>
+
+  <div id="output"></div>
+
+  <script>
+    let audioContext, analyser, microphone, dataArray, rms = 0;
+
+    const emotionLists = {
+      distress: ["help", "hurt", "alone", "empty", "dark", "hopeless", "lost", "pain", "no one", "numb", "worthless"],
+      joy: ["happy", "grateful", "smile", "excited", "joy", "love life", "cheerful", "blessed"],
+      sadness: ["sad", "depressed", "missing", "lonely", "tired", "regret", "cry", "tears", "goodbye"],
+      bond: ["love", "connection", "soulmate", "feel you", "attached", "deep bond", "heartfelt"],
+      anxiety: ["anxious", "nervous", "panic", "fear", "scared", "stress", "worry"],
+      anger: ["angry", "hate", "rage", "mad", "furious", "frustrated", "sick of it"]
+    };
+
+    function getTextEmotion(text) {
+      text = text.toLowerCase();
+      for (let [emotion, words] of Object.entries(emotionLists)) {
+        if (words.some(word => text.includes(word))) {
+          return emotion;
+        }
+      }
+      return "neutral";
+    }
+
+    function getVoiceEmotion(rms) {
+      if (rms > 30) return "anger";
+      if (rms > 15) return "anxiety";
+      if (rms > 5) return "joy";
+      if (rms > 2) return "sadness";
+      return "neutral";
+    }
+
+    function compareEmotions(textEmotion, voiceEmotion) {
+      if (textEmotion === voiceEmotion) {
+        return `✅ Voice and text agree: ${textEmotion.toUpperCase()}`;
+      } else if (textEmotion === "neutral") {
+        return `⚠️ Voice says ${voiceEmotion}, but words seem neutral. Hidden emotion?`;
+      } else if (voiceEmotion === "neutral") {
+        return `⚠️ Text says ${textEmotion}, but voice seems calm. Masked tone?`;
+      } else {
+        return `❗Mismatch: Text says ${textEmotion}, voice says ${voiceEmotion}. Inner conflict detected.`;
+      }
+    }
+
+    function analyzeHybrid() {
+      const text = document.getElementById("inputText").value;
+      const textEmotion = getTextEmotion(text);
+      const voiceEmotion = getVoiceEmotion(rms);
+      const result = compareEmotions(textEmotion, voiceEmotion);
+      document.getElementById("output").innerText = result;
+    }
+
+    function startListening() {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          microphone = audioContext.createMediaStreamSource(stream);
+          microphone.connect(analyser);
+          analyser.fftSize = 2048;
+          dataArray = new Uint8Array(analyser.fftSize);
+          document.getElementById("voiceStatus").innerText = "Voice: Listening...";
+          monitorVoice();
+        })
+        .catch(err => {
+          document.getElementById("voiceStatus").innerText = "Microphone access denied.";
+        });
+    }
+
+    function monitorVoice() {
+      analyser.getByteTimeDomainData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const deviation = dataArray[i] - 128;
+        sum += deviation * deviation;
+      }
+      rms = Math.sqrt(sum / dataArray.length);
+      requestAnimationFrame(monitorVoice);
+    }
+  </script>
+</body>
+</html>

@@ -5,6 +5,21 @@
   <meta charset="UTF-8" />
   <title>M-realm: Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#00ffff"/>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(() => {
+        console.log("✅ Service Worker registered");
+      }).catch(err => {
+        console.error("Service Worker registration failed:", err);
+      });
+    }
+  </script>
+  <style>
+    /* Your existing styles stay the same... */
+  </style>
+</head>
   <style>
     body {
       background: #000;
@@ -57,3 +72,5 @@
   <footer>© 2025 Bala Mrunal Nuguri · M-realm</footer>
 </body>
 </html>
+   
+

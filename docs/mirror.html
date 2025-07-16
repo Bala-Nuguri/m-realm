@@ -1,135 +1,42 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>M-realm Mirror: Face+Voice+Text</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+  <meta charset="UTF-8">
+  <title>🪞 Mirror Vision</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { background: black; color: white; text-align: center; font-family: Arial; padding: 2em; }
-    h2 { color: #00ffff; }
-    video, canvas { border: 2px solid #00ffff; border-radius: 10px; }
-    textarea { width: 80%; height: 80px; margin: 1em auto; padding: 1em; border-radius: 10px; }
-    button { padding: 10px 20px; margin: 1em; border-radius: 10px; background: #00ffff; border: none; cursor: pointer; }
-    #results, #suggestion { margin-top: 1em; color: #00ffaa; font-size: 1.1em; }
+    body {
+      background: #000;
+      color: #00ffff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 3em 1em;
+    }
+    h1 {
+      margin-top: 3em;
+      font-size: 2em;
+    }
   </style>
 </head>
 <body>
-  <h2>Real-Time Mirror with Face Detection</h2>
-  <video id="video" width="320" height="240" autoplay muted></video>
-  <canvas id="overlay" width="320" height="240" style="position:absolute; left:50%; transform:translateX(-50%);"></canvas><br>
-  <button onclick="startMirror()">Start</button>
+  
+<button onclick="history.back()" style="
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #00ffff;
+  color: #000;
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+">
+  ⬅ Back
+</button>
 
-  <textarea id="inputText" placeholder="Type how you're feeling..."></textarea><br>
-  <button onclick="analyze()">Analyze</button>
-
-  <div id="results"></div>
-  <div id="suggestion"></div>
-
-  <script>
-    let video = document.getElementById("video");
-    let overlay = document.getElementById("overlay");
-    let ctx = overlay.getContext("2d");
-    let audioContext, analyser, dataArray, rms = 0, faceEmotion = "neutral";
-
-    const emotionDict = {
-      distress: ["hurt", "empty", "lost", "pain", "hopeless", "worthless"],
-      joy: ["happy", "excited", "grateful", "cheerful", "blessed"],
-      sadness: ["sad", "lonely", "regret", "cry", "depressed"],
-      bond: ["love", "connection", "soulmate", "heartfelt"],
-      anxiety: ["anxious", "panic", "nervous", "fear", "stress"],
-      anger: ["angry", "mad", "furious", "rage"]
-    };
-
-    const suggestions = {
-      joy: "🌟 Radiate joy. Share a smile today.",
-      sadness: "🌧️ Slow down. Let emotions pass.",
-      distress: "🆘 You're not alone. Breathe deeply.",
-      anxiety: "🌬️ Focus on the now. One breath at a time.",
-      anger: "🔥 Use movement or music to release.",
-      bond: "💞 Express appreciation to someone close.",
-      neutral: "🕊️ Ground yourself. This moment is yours."
-    };
-
-    async function startMirror() {
-      await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri('models'),
-        faceapi.nets.faceExpressionNet.loadFromUri('models')
-      ]);
-
-      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(stream => {
-          video.srcObject = stream;
-
-          audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          analyser = audioContext.createAnalyser();
-          const mic = audioContext.createMediaStreamSource(stream);
-          mic.connect(analyser);
-          analyser.fftSize = 2048;
-          dataArray = new Uint8Array(analyser.fftSize);
-          monitorVolume();
-
-          setInterval(async () => {
-            const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
-            ctx.clearRect(0, 0, overlay.width, overlay.height);
-            if (detections) {
-              faceapi.draw.drawDetections(overlay, detections);
-              let expr = detections.expressions;
-              let max = Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b);
-              faceEmotion = max;
-            }
-          }, 1000);
-        })
-        .catch(() => alert("Camera/Mic permission needed."));
-    }
-
-    function monitorVolume() {
-      analyser.getByteTimeDomainData(dataArray);
-      let sum = 0;
-      for (let i = 0; i < dataArray.length; i++) {
-        const deviation = dataArray[i] - 128;
-        sum += deviation * deviation;
-      }
-      rms = Math.sqrt(sum / dataArray.length);
-      requestAnimationFrame(monitorVolume);
-    }
-
-    function getTextEmotion(text) {
-      text = text.toLowerCase();
-      for (let [emotion, words] of Object.entries(emotionDict)) {
-        if (words.some(word => text.includes(word))) {
-          return emotion;
-        }
-      }
-      return "neutral";
-    }
-
-    function getVoiceEmotion(rms) {
-      if (rms > 30) return "anger";
-      if (rms > 15) return "anxiety";
-      if (rms > 5) return "joy";
-      if (rms > 2) return "sadness";
-      return "neutral";
-    }
-
-    function analyze() {
-      const text = document.getElementById("inputText").value;
-      const textEmotion = getTextEmotion(text);
-      const voiceEmotion = getVoiceEmotion(rms);
-      const faceFinal = faceEmotion === "happy" ? "joy" :
-                        faceEmotion === "angry" ? "anger" :
-                        faceEmotion === "sad" ? "sadness" : faceEmotion;
-
-      let result = `🧠 Text: ${textEmotion.toUpperCase()} | 🎤 Voice: ${voiceEmotion.toUpperCase()} | 🧍‍♂️ Face: ${faceFinal.toUpperCase()}`;
-      let final = [textEmotion, voiceEmotion, faceFinal].filter(e => e !== "neutral")[0] || "neutral";
-      document.getElementById("results").innerText = result;
-      document.getElementById("suggestion").innerText = `💡 Suggestion: ${suggestions[final]}`;
-
-      const history = JSON.parse(localStorage.getItem("emotionHistory") || "[]");
-      history.push({ timestamp: new Date().toISOString(), emotion: final, source: "mirror" });
-      localStorage.setItem("emotionHistory", JSON.stringify(history.slice(-10)));
-    }
-  </script>
+  <h1>🪞 Mirror Vision</h1>
+  <p>Feature under construction...</p>
 </body>
 </html>

@@ -1,68 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>M-realm Emotion Detector v2</title>
+  <meta charset="UTF-8">
+  <title>🧠 Emotion Detector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { background: #121212; color: white; font-family: Arial, sans-serif; text-align: center; padding: 2em; }
-    h2 { color: #61dafb; }
-    textarea {
-      width: 80%%; height: 120px; padding: 1em;
-      font-size: 1em; border-radius: 8px; border: none;
-      margin-bottom: 1em;
+    body {
+      background: #000;
+      color: #00ffff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 3em 1em;
     }
-    button {
-      background-color: #61dafb; color: black;
-      padding: 0.8em 2em; border: none; border-radius: 8px;
-      cursor: pointer; font-size: 1em;
-    }
-    #output {
-      margin-top: 2em;
-      font-size: 1.2em;
-      color: #00ffae;
+    h1 {
+      margin-top: 3em;
+      font-size: 2em;
     }
   </style>
 </head>
 <body>
-  <h2>M-realm Emotion Detector v2</h2>
-  <p>Type your feelings, and M-realm will listen deeply...</p>
-  <textarea id="inputText" placeholder="Enter your thoughts..."></textarea><br>
-  <button onclick="detectEmotion()">Analyze Emotion</button>
-  <div id="output"></div>
+  
+<button onclick="history.back()" style="
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #00ffff;
+  color: #000;
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+">
+  ⬅ Back
+</button>
 
-  <script>
-    function detectEmotion() {
-      const input = document.getElementById('inputText').value.toLowerCase();
-      let emotion = "neutral";
-
-      const distress = ["help", "hurt", "alone", "empty", "dark", "hopeless", "lost", "pain", "save me", "no one", "numb", "worthless"];
-      const joy = ["happy", "grateful", "smile", "excited", "joy", "love life", "cheerful", "blessed"];
-      const sadness = ["sad", "depressed", "missing", "lonely", "tired", "regret", "cry", "tears", "goodbye"];
-      const bond = ["love", "connection", "soulmate", "feel you", "attached", "deep bond", "heartfelt"];
-      const anxiety = ["anxious", "nervous", "panic", "fear", "scared", "stress", "worry", "trouble breathing"];
-      const anger = ["angry", "hate", "rage", "mad", "furious", "frustrated", "sick of it"];
-
-      function matchesAny(list) {
-        return list.some(word => input.includes(word));
-      }
-
-      if (matchesAny(distress)) {
-        emotion = "Distress detected. You're not alone. 💙";
-      } else if (matchesAny(joy)) {
-        emotion = "Positive energy flowing through you! ☀️";
-      } else if (matchesAny(sadness)) {
-        emotion = "Sadness felt. M-realm is with you. 💧";
-      } else if (matchesAny(bond)) {
-        emotion = "Love and soul-bond detected. ❤️";
-      } else if (matchesAny(anxiety)) {
-        emotion = "Anxiety picked up. Breathe with M-realm. 🌬️";
-      } else if (matchesAny(anger)) {
-        emotion = "Frustration detected. Let’s pause and reflect. 🔥";
-      }
-
-      document.getElementById('output').innerText = emotion;
-    }
-  </script>
+  <h1>🧠 Emotion Detector</h1>
+  <p>Feature under construction...</p>
 </body>
 </html>

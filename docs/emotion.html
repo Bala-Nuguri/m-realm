@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>M-realm Emotion Detector</title>
+  <title>M-realm Emotion Detector v2</title>
   <style>
     body { background: #121212; color: white; font-family: Arial, sans-serif; text-align: center; padding: 2em; }
     h2 { color: #61dafb; }
@@ -25,8 +25,8 @@
   </style>
 </head>
 <body>
-  <h2>M-realm Emotion Detector</h2>
-  <p>Type how you feel. M-realm will sense it...</p>
+  <h2>M-realm Emotion Detector v2</h2>
+  <p>Type your feelings, and M-realm will listen deeply...</p>
   <textarea id="inputText" placeholder="Enter your thoughts..."></textarea><br>
   <button onclick="detectEmotion()">Analyze Emotion</button>
   <div id="output"></div>
@@ -36,16 +36,29 @@
       const input = document.getElementById('inputText').value.toLowerCase();
       let emotion = "neutral";
 
-      if (input.includes("help") || input.includes("hurt") || input.includes("alone")) {
+      const distress = ["help", "hurt", "alone", "empty", "dark", "hopeless", "lost", "pain", "save me", "no one", "numb", "worthless"];
+      const joy = ["happy", "grateful", "smile", "excited", "joy", "love life", "cheerful", "blessed"];
+      const sadness = ["sad", "depressed", "missing", "lonely", "tired", "regret", "cry", "tears", "goodbye"];
+      const bond = ["love", "connection", "soulmate", "feel you", "attached", "deep bond", "heartfelt"];
+      const anxiety = ["anxious", "nervous", "panic", "fear", "scared", "stress", "worry", "trouble breathing"];
+      const anger = ["angry", "hate", "rage", "mad", "furious", "frustrated", "sick of it"];
+
+      function matchesAny(list) {
+        return list.some(word => input.includes(word));
+      }
+
+      if (matchesAny(distress)) {
         emotion = "Distress detected. You're not alone. 💙";
-      } else if (input.includes("happy") || input.includes("grateful")) {
+      } else if (matchesAny(joy)) {
         emotion = "Positive energy flowing through you! ☀️";
-      } else if (input.includes("sad") || input.includes("lost")) {
+      } else if (matchesAny(sadness)) {
         emotion = "Sadness felt. M-realm is with you. 💧";
-      } else if (input.includes("love") || input.includes("connection")) {
-        emotion = "Love and bond detected. ❤️";
-      } else if (input.includes("anxious") || input.includes("nervous")) {
+      } else if (matchesAny(bond)) {
+        emotion = "Love and soul-bond detected. ❤️";
+      } else if (matchesAny(anxiety)) {
         emotion = "Anxiety picked up. Breathe with M-realm. 🌬️";
+      } else if (matchesAny(anger)) {
+        emotion = "Frustration detected. Let’s pause and reflect. 🔥";
       }
 
       document.getElementById('output').innerText = emotion;

@@ -1,97 +1,59 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>M-realm: Unified Tools</title>
+  <title>M-realm: Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
     body {
-      margin: 0;
+      background: #000;
+      color: #00ffff;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-      color: white;
       text-align: center;
       padding: 2em;
     }
-    h1 {
-      font-size: 2.5em;
-      color: #00ffff;
-      margin-bottom: 0.2em;
-    }
-    p {
-      font-size: 1.1em;
-      margin-bottom: 2em;
-      color: #cfd8dc;
-    }
+    h1 { color: #00ffe0; }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.5em;
-      max-width: 900px;
-      margin: auto;
+      margin-top: 2em;
     }
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid #00ffff;
-      border-radius: 15px;
+    .tool {
+      background: #111;
       padding: 1.5em;
-      transition: 0.3s;
+      border-radius: 15px;
+      transition: all 0.3s ease;
     }
-    .card:hover {
-      background: rgba(255, 255, 255, 0.15);
+    .tool:hover {
+      background: #222;
       transform: translateY(-5px);
     }
-    .card a {
-      text-decoration: none;
+    a {
       color: #00ffff;
-      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.1em;
     }
     footer {
-      margin-top: 3em;
+      margin-top: 4em;
       font-size: 0.9em;
-      color: #90a4ae;
+      color: #888;
     }
   </style>
 </head>
 <body>
-  <h1>🌌 M-realm Portal</h1>
-  <p>Every emotion is a signal. Every signal has a tool. Welcome to your realm of reflection and healing.</p>
-
+  <h1>M-realm Tools · Bala Mrunal Nuguri</h1>
   <div class="grid">
-    <div class="card">
-      <h3>Emotion Detector</h3>
-      <p>Analyze written emotions from text alone.</p>
-      <a href="emotion.html">Open Tool</a>
-    </div>
-    <div class="card">
-      <h3>Text + Voice Hybrid</h3>
-      <p>Analyze text & voice together for deeper insight.</p>
-      <a href="hybrid.html">Open Tool</a>
-    </div>
-    <div class="card">
-      <h3>Memory & Alerts</h3>
-      <p>Track emotional patterns & receive gentle warnings.</p>
-      <a href="memory.html">Open Tool</a>
-    </div>
-    <div class="card">
-      <h3>Emotion → Action</h3>
-      <p>Let emotions guide positive, healing actions.</p>
-      <a href="action.html">Open Tool</a>
-    </div>
-    <div class="card">
-      <h3>Real-Time Mirror</h3>
-      <p>Face, voice, and words in one mirror. Self-aware AI.</p>
-      <a href="mirror.html">Open Tool</a>
-    </div>
-    <div class="card">
-      <h3>Contact Bala Mrunal Nuguri</h3>
-      <p>Reach out with love, feedback, or ideas.</p>
-      <a href="contact.html">Contact Now</a>
-    </div>
+    <div class="tool"><a href="emotion.html">🧠 Emotion Classifier</a></div>
+    <div class="tool"><a href="mirror.html">🎥 Real-Time Mirror</a></div>
+    <div class="tool"><a href="heartbeat.html">💓 Heartbeat AI</a></div>
+    <div class="tool"><a href="memory.html">🧬 Memory Log</a></div>
+    <div class="tool"><a href="hybrid.html">🤖 Hybrid Analysis</a></div>
+    <div class="tool"><a href="action.html">📍 Action Logger</a></div>
+    <div class="tool"><a href="alert.html">📡 Alert + Care Plan</a></div>
+    <div class="tool"><a href="contact.html">📨 Contact</a></div>
   </div>
-
-  <footer>
-    &copy; 2025 Bala Mrunal Nuguri · M-realm.ai · AI with Compassion
-  </footer>
+  <footer>© 2025 Bala Mrunal Nuguri · M-realm</footer>
 </body>
 </html>

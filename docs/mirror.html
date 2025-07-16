@@ -1,35 +1,28 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>M-realm Mirror with Face Detection</title>
+  <title>M-realm Mirror: Face+Voice+Text</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
   <style>
-    body { background: black; color: white; font-family: Arial, sans-serif; text-align: center; padding: 1em; }
+    body { background: black; color: white; text-align: center; font-family: Arial; padding: 2em; }
     h2 { color: #00ffff; }
-    video, canvas { border: 3px solid #00ffff; border-radius: 10px; margin-bottom: 1em; }
-    textarea {
-      width: 80%%; height: 100px; font-size: 1em;
-      border-radius: 10px; padding: 1em; margin: 1em auto; border: none;
-    }
-    button {
-      background: #00ffff; color: black; padding: 10px 20px;
-      border: none; border-radius: 10px; cursor: pointer; font-size: 1em;
-    }
+    video, canvas { border: 2px solid #00ffff; border-radius: 10px; }
+    textarea { width: 80%; height: 80px; margin: 1em auto; padding: 1em; border-radius: 10px; }
+    button { padding: 10px 20px; margin: 1em; border-radius: 10px; background: #00ffff; border: none; cursor: pointer; }
     #results, #suggestion { margin-top: 1em; color: #00ffaa; font-size: 1.1em; }
   </style>
 </head>
 <body>
-  <h2>M-realm Mirror: Face + Voice + Text</h2>
-  <p>Triple emotion detection: facial expression, voice tone, and written word.</p>
-
+  <h2>Real-Time Mirror with Face Detection</h2>
   <video id="video" width="320" height="240" autoplay muted></video>
-  <canvas id="overlay" width="320" height="240" style="position:absolute; left:50%%; transform:translateX(-50%%);"></canvas><br>
-  <button onclick="startMirror()">Start Mirror</button>
+  <canvas id="overlay" width="320" height="240" style="position:absolute; left:50%; transform:translateX(-50%);"></canvas><br>
+  <button onclick="startMirror()">Start</button>
 
-  <textarea id="inputText" placeholder="Write how you feel..."></textarea><br>
-  <button onclick="analyze()">Analyze All</button>
+  <textarea id="inputText" placeholder="Type how you're feeling..."></textarea><br>
+  <button onclick="analyze()">Analyze</button>
 
   <div id="results"></div>
   <div id="suggestion"></div>
@@ -61,8 +54,8 @@
 
     async function startMirror() {
       await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri("https://cdn.jsdelivr.net/npm/face-api.js/models"),
-        faceapi.nets.faceExpressionNet.loadFromUri("https://cdn.jsdelivr.net/npm/face-api.js/models")
+        faceapi.nets.tinyFaceDetector.loadFromUri('models'),
+        faceapi.nets.faceExpressionNet.loadFromUri('models')
       ]);
 
       navigator.mediaDevices.getUserMedia({ video: true, audio: true })
@@ -126,15 +119,13 @@
       const voiceEmotion = getVoiceEmotion(rms);
       const faceFinal = faceEmotion === "happy" ? "joy" :
                         faceEmotion === "angry" ? "anger" :
-                        faceEmotion === "sad" ? "sadness" :
-                        faceEmotion;
+                        faceEmotion === "sad" ? "sadness" : faceEmotion;
 
       let result = `🧠 Text: ${textEmotion.toUpperCase()} | 🎤 Voice: ${voiceEmotion.toUpperCase()} | 🧍‍♂️ Face: ${faceFinal.toUpperCase()}`;
       let final = [textEmotion, voiceEmotion, faceFinal].filter(e => e !== "neutral")[0] || "neutral";
       document.getElementById("results").innerText = result;
       document.getElementById("suggestion").innerText = `💡 Suggestion: ${suggestions[final]}`;
 
-      // Memory logging
       const history = JSON.parse(localStorage.getItem("emotionHistory") || "[]");
       history.push({ timestamp: new Date().toISOString(), emotion: final, source: "mirror" });
       localStorage.setItem("emotionHistory", JSON.stringify(history.slice(-10)));

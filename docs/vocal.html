@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>M-realm Vocal Emotion Detector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { background: #0f0f0f; color: white; font-family: Arial, sans-serif; text-align: center; padding: 2em; }
+    h2 { color: #61dafb; }
+    button {
+      padding: 1em 2em;
+      background: #61dafb; color: black;
+      border: none; border-radius: 8px;
+      font-size: 1em; cursor: pointer;
+    }
+    #emotion {
+      font-size: 1.4em;
+      margin-top: 2em;
+      color: #00ffae;
+    }
+  </style>
+</head>
+<body>
+  <h2>M-realm Vocal Emotion Detector</h2>
+  <p>Click start and speak. M-realm will listen and reflect your tone.</p>
+  <button onclick="startListening()">🎙️ Start Listening</button>
+  <div id="emotion">Awaiting voice input...</div>
+
+  <script>
+    let audioContext;
+    let analyser;
+    let microphone;
+    let dataArray;
+
+    function startListening() {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          microphone = audioContext.createMediaStreamSource(stream);
+          microphone.connect(analyser);
+          analyser.fftSize = 2048;
+
+          dataArray = new Uint8Array(analyser.fftSize);
+          analyzeVolume();
+        })
+        .catch(err => {
+          document.getElementById("emotion").innerText = "Microphone access denied.";
+          console.error(err);
+        });
+    }
+
+    function analyzeVolume() {
+      analyser.getByteTimeDomainData(dataArray);
+
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const deviation = dataArray[i] - 128;
+        sum += deviation * deviation;
+      }
+      const rms = Math.sqrt(sum / dataArray.length);
+      let emotion = "neutral";
+
+      if (rms > 30) {
+        emotion = "😡 High energy: You sound intense or angry.";
+      } else if (rms > 15) {
+        emotion = "😨 Elevated tone: Possible stress or urgency.";
+      } else if (rms > 5) {
+        emotion = "😌 Normal speaking tone detected.";
+      } else {
+        emotion = "😢 Very soft: You may be sad or quiet.";
+      }
+
+      document.getElementById("emotion").innerText = emotion;
+      requestAnimationFrame(analyzeVolume);
+    }
+  </script>
+</body>
+</html>

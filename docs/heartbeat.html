@@ -1,42 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>💓 Heartbeat Reader</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heartbeat Simulation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      background: #000;
-      color: #00ffff;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 3em 1em;
+    .heart {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+      position: relative;
+      margin: 4em auto;
+      transform: rotate(-45deg);
+      animation: beat 1s infinite;
     }
-    h1 {
-      margin-top: 3em;
-      font-size: 2em;
+    .heart:before, .heart:after {
+      content: "";
+      background-color: red;
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      position: absolute;
+    }
+    .heart:before {
+      top: -50px;
+      left: 0;
+    }
+    .heart:after {
+      left: 50px;
+      top: 0;
+    }
+    @keyframes beat {
+      0%, 100% { transform: scale(1) rotate(-45deg); }
+      50% { transform: scale(1.2) rotate(-45deg); }
     }
   </style>
 </head>
-<body>
-  
-<button onclick="history.back()" style="
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  background: #00ffff;
-  color: #000;
-  border: none;
-  padding: 0.5em 1em;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-">
-  ⬅ Back
-</button>
-
+<body style="background:#000;color:#00ffff;text-align:center;padding:2em;font-family:sans-serif;">
+  <button onclick="history.back()" style="position:absolute;top:15px;left:15px;background:#00ffff;color:#000;padding:0.5em 1em;border:none;border-radius:10px;font-weight:bold;">⬅ Back</button>
   <h1>💓 Heartbeat Reader</h1>
-  <p>Feature under construction...</p>
+  <div class="heart"></div>
 </body>
 </html>

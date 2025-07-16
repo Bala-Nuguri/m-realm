@@ -1,42 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>🧠 Emotion Detector</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      background: #000;
-      color: #00ffff;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 3em 1em;
-    }
-    h1 {
-      margin-top: 3em;
-      font-size: 2em;
-    }
-  </style>
+  <title>Emotion Detector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://unpkg.com/sentiment@5.0.2/build/sentiment.min.js"></script>
 </head>
-<body>
-  
-<button onclick="history.back()" style="
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  background: #00ffff;
-  color: #000;
-  border: none;
-  padding: 0.5em 1em;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-">
-  ⬅ Back
-</button>
-
+<body style="background:#000;color:#00ffff;font-family:sans-serif;text-align:center;padding:2em;">
+  <button onclick="history.back()" style="position:absolute;top:15px;left:15px;background:#00ffff;color:#000;padding:0.5em 1em;border:none;border-radius:10px;font-weight:bold;">⬅ Back</button>
   <h1>🧠 Emotion Detector</h1>
-  <p>Feature under construction...</p>
+  <textarea id="textInput" rows="5" style="width:90%;margin-top:2em;"></textarea><br><br>
+  <button onclick="analyze()">Analyze Emotion</button>
+  <h2 id="result" style="margin-top:2em;"></h2>
+  <script>
+    function analyze() {
+      const input = document.getElementById("textInput").value;
+      const sentiment = new Sentiment();
+      const result = sentiment.analyze(input);
+      document.getElementById("result").innerText = "Detected emotion: " + (result.score > 0 ? "Positive 😊" : result.score < 0 ? "Negative 😠" : "Neutral 😐");
+    }
+  </script>
 </body>
 </html>

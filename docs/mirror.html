@@ -1,117 +1,96 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>M-realm Mirror - Working AI</title>
+  <title>Real-Time Mirror · M-realm</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0b0b1e;
-      color: #fff;
+      background-color: #000;
+      color: #0ff;
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 20px;
+      padding: 2rem;
     }
-
-    video {
-      border-radius: 12px;
-      width: 100%;
+    video, canvas {
+      border-radius: 1rem;
+      margin-top: 1rem;
+      width: 90%;
       max-width: 480px;
-      margin-top: 20px;
     }
-
-    #emotion {
-      margin-top: 20px;
-      font-size: 1.4em;
-      color: #ffcc99;
+    #status {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: #0f0;
     }
-
     .back-button {
-      margin-top: 30px;
-    }
-
-    .back-button a {
-      color: #aadfff;
-      font-size: 1.1em;
-    }
-
-    .error {
-      color: #ff6666;
-      margin-top: 10px;
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 0.5rem 1.5rem;
+      border: none;
+      background: #0ff;
+      color: #000;
+      border-radius: 0.5rem;
+      text-decoration: none;
     }
   </style>
-  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
 </head>
 <body>
-  <h1>🪞 M-realm Mirror</h1>
+  <h1>Real-Time Mirror</h1>
+  <p>Detecting your facial expression...</p>
   <video id="video" autoplay muted playsinline></video>
-  <div id="emotion">Loading camera and AI...</div>
-  <div id="error" class="error"></div>
-  <div class="back-button">
-    <a href="mrealm.html">🔙 Back to Realm</a>
-  </div>
+  <canvas id="overlay"></canvas>
+  <div id="status">Loading models...</div>
+  <a href="index.html" class="back-button">← Back to Home</a>
 
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
   <script>
-    const video = document.getElementById("video");
-    const emotionDisplay = document.getElementById("emotion");
-    const errorDisplay = document.getElementById("error");
+    const video = document.getElementById('video');
+    const overlay = document.getElementById('overlay');
+    const statusText = document.getElementById('status');
+    const displaySize = { width: 480, height: 360 };
 
-    async function startCamera() {
+    async function setupCamera() {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
         video.srcObject = stream;
-        emotionDisplay.textContent = "Camera started. Looking for your expression...";
-      } catch (err) {
-        errorDisplay.textContent = "❗ Cannot access camera. Please allow it in your browser.";
-        console.error("Camera error:", err);
+      } catch (error) {
+        statusText.innerText = "❌ Failed to access camera.";
+        console.error(error);
       }
     }
 
-    async function loadModels() {
-      const MODEL_URL = "https://justadudewhohacks.github.io/face-api.js/models";
-      try {
-        emotionDisplay.textContent = "Loading AI models...";
-        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-        await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
-        emotionDisplay.textContent = "Models loaded. Starting camera...";
-        startCamera();
-      } catch (modelError) {
-        errorDisplay.textContent = "❗ Failed to load face-api models.";
-        console.error("Model loading error:", modelError);
-      }
+    async function startFaceDetection() {
+      await faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
+      await faceapi.nets.faceExpressionNet.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
+
+      statusText.innerText = "✅ Models loaded. Detecting expressions...";
+      setupCamera();
+
+      video.addEventListener('play', () => {
+        const canvas = faceapi.createCanvasFromMedia(video);
+        overlay.replaceWith(canvas);
+        overlay.id = "overlay";
+        faceapi.matchDimensions(canvas, displaySize);
+
+        setInterval(async () => {
+          const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+          const resized = faceapi.resizeResults(detections, displaySize);
+          canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+          faceapi.draw.drawDetections(canvas, resized);
+          faceapi.draw.drawFaceExpressions(canvas, resized);
+
+          if (detections.length > 0) {
+            const expr = detections[0].expressions;
+            const topEmotion = Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b);
+            statusText.innerText = `😐 You look: ${topEmotion}`;
+          }
+        }, 1000);
+      });
     }
 
-    function getTopEmotion(expressions) {
-      return Object.entries(expressions)
-        .sort((a, b) => b[1] - a[1])[0][0];
-    }
-
-    async function detectExpression() {
-      try {
-        const result = await faceapi
-          .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
-          .withFaceExpressions();
-        if (result && result.expressions) {
-          const top = getTopEmotion(result.expressions);
-          emotionDisplay.textContent = `You seem to be feeling: ${top}`;
-        } else {
-          emotionDisplay.textContent = "Looking for your face...";
-        }
-      } catch (err) {
-        console.error("Detection error:", err);
-        emotionDisplay.textContent = "Error detecting expression.";
-      }
-    }
-
-    video.addEventListener("playing", () => {
-      setInterval(detectExpression, 2000);
-    });
-
-    if (location.protocol === "file:") {
-      errorDisplay.textContent = "❗ This page may not work properly when opened from file://. Use localhost or upload online.";
-    }
-
-    loadModels();
+    startFaceDetection();
   </script>
 </body>
 </html>

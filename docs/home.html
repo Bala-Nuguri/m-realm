@@ -1,61 +1,62 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>M-realm – Let One Dream Save One Soul</title>
-  <link rel="icon" type="image/png" href="favicon.png" />
+  <title>M-realm Tools · Bala Mrunal Nuguri</title>
   <style>
     body {
-      margin: 0; font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(ellipse at center, #0f0c29 0%, #302b63 50%, #24243e 100%);
-      color: #fff; text-align: center; padding: 2em; overflow-x: hidden;
-      animation: fadeIn 2s ease-in;
+      background-color: #000;
+      color: #0ff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 2rem;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
+    h1 {
+      color: #00ffff;
     }
-    .logo-img {
-      width: 120px; margin-bottom: 1em;
-      animation: pulse 3s ease-in-out infinite;
+    .tool-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
     }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.9; }
+    .tool-button {
+      background-color: #111;
+      color: #0ff;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      font-size: 1.1rem;
+      text-decoration: none;
+      display: inline-block;
+      min-width: 200px;
+      transition: transform 0.2s ease-in-out;
     }
-    .logo-text { font-size: 3em; font-weight: bold; color: #61dafb; }
-    .tagline { font-size: 1.5em; margin-top: 0.5em; }
-    .section { margin-top: 3em; max-width: 720px; margin-left: auto; margin-right: auto; }
-    .cta-button {
-      background: #61dafb; color: #000; padding: 0.8em 2em;
-      border: none; font-size: 1em; cursor: pointer; margin-top: 2em; border-radius: 6px;
+    .tool-button:hover {
+      transform: scale(1.05);
+      background-color: #222;
     }
-    footer { margin-top: 4em; font-size: 0.8em; color: #aaa; }
+    footer {
+      margin-top: 2rem;
+      color: #999;
+    }
   </style>
 </head>
 <body>
-  <img src="logo.png" alt="M-realm Logo" class="logo-img" />
-  <div class="logo-text">M-realm</div>
-  <div class="tagline">Let One Dream Save One Soul</div>
-
-  <div class="section">
-    <h2>What is M-realm?</h2>
-    <p>
-      M-realm is a compassion-driven AI system created to detect emotional shifts,
-      mirror silent pain, and alert those who care — even before words are spoken.
-    </p>
-    <p>
-      This platform was envisioned by <strong>Bala Mrunal Nuguri</strong>, a visionary dedicated
-      to combining human emotion with AI presence. Every line, every beat, every pixel – has a pulse.
-    </p>
-    <a href="mrealm.html"><button class="cta-button">Experience the Realm</button></a>
+  <h1>M-realm Tools · Bala Mrunal Nuguri</h1>
+  <div class="tool-grid">
+    <a class="tool-button" href="emotion.html">🧠 Emotion Classifier</a>
+    <a class="tool-button" href="mirror.html">🎥 Real-Time Mirror</a>
+    <a class="tool-button" href="heartbeat.html">💓 Heartbeat AI</a>
+    <a class="tool-button" href="memory.html">🧬 Memory Log</a>
+    <a class="tool-button" href="hybrid.html">🤖 Hybrid Analysis</a>
+    <a class="tool-button" href="action.html">📍 Action Logger</a>
+    <a class="tool-button" href="alert.html">🧪 Alert + Care Plan</a>
+    <a class="tool-button" href="contact.html">📨 Contact</a>
   </div>
-
-  <footer>
-    &copy; 2025 M-realm. Created by Bala Mrunal Nuguri.
-  </footer>
-
-    <a href="echo.html" style="display:block;margin-top:20px;text-align:center;font-size:1.2em;color:#aadfff;">🔮 Daily Energy Console</a>
+  <footer>© 2025 Bala Mrunal Nuguri · M-realm</footer>
 </body>
 </html>

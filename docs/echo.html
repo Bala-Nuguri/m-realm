@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>M-realm Echo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #1e1e2f, #2e2e4f);
+      color: #f0f0f0;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+    }
+
+    .label {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #aadfff;
+    }
+
+    .value {
+      margin-top: 8px;
+      font-size: 1.3em;
+      color: #ffffff;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.9em;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌟 M-realm Echo</h1>
+
+  <div class="card">
+    <div class="label">📆 Date</div>
+    <div class="value" id="echoDate"></div>
+  </div>
+
+  <div class="card">
+    <div class="label">💠 Dominant Emotion</div>
+    <div class="value" id="dominantEmotion">Loading...</div>
+  </div>
+
+  <div class="card">
+    <div class="label">👼😈 Last Possessor</div>
+    <div class="value" id="lastPossessor">Loading...</div>
+  </div>
+
+  <div class="card">
+    <div class="label">🧘 Remedy of the Day</div>
+    <div class="value" id="remedy">Loading...</div>
+  </div>
+
+  <div class="card">
+    <div class="label">📝 Energy Reflection</div>
+    <div class="value" id="reflection">Loading...</div>
+  </div>
+
+  <div class="footer">M-realm watches over you</div>
+
+  <script>
+    function loadEcho() {
+      const now = new Date();
+      document.getElementById("echoDate").innerText = now.toDateString();
+
+      const log = JSON.parse(localStorage.getItem("mrealmEmotionLog") || "[]");
+
+      if (log.length === 0) {
+        document.getElementById("dominantEmotion").innerText = "No data yet.";
+        document.getElementById("lastPossessor").innerText = "None";
+        document.getElementById("remedy").innerText = "Take a deep breath.";
+        document.getElementById("reflection").innerText = "Welcome to your realm.";
+        return;
+      }
+
+      // Filter today's entries
+      const today = now.toISOString().split("T")[0];
+      const todaysLog = log.filter(entry => entry.timestamp.startsWith(today));
+
+      if (todaysLog.length === 0) {
+        document.getElementById("dominantEmotion").innerText = "No entries yet today.";
+        document.getElementById("lastPossessor").innerText = "None";
+        document.getElementById("remedy").innerText = "Take a deep breath.";
+        document.getElementById("reflection").innerText = "Be gentle with yourself.";
+        return;
+      }
+
+      // Find dominant emotion
+      const countMap = {};
+      let last = todaysLog[todaysLog.length - 1];
+      todaysLog.forEach(entry => {
+        countMap[entry.emotion] = (countMap[entry.emotion] || 0) + 1;
+      });
+      const dominant = Object.keys(countMap).reduce((a, b) => countMap[a] > countMap[b] ? a : b);
+      const lastEntity = last.entity || "none";
+
+      // Remedies based on emotion
+      const remedies = {
+        joy: "Share your joy with someone.",
+        gratitude: "Write down 3 things you're grateful for.",
+        forgiveness: "Let go of something that's been heavy.",
+        anger: "Step outside for 2 minutes of stillness.",
+        fear: "Speak your fear out loud, then breathe.",
+        betrayal: "Remind yourself: trust heals slowly.",
+        shame: "You are enough. Right now.",
+        love: "Send love to someone silently.",
+        peace: "Sit in that peace. Let it grow.",
+        envy: "Turn envy into curiosity.",
+        default: "Drink water. Breathe deeply."
+      };
+
+      const remedy = remedies[dominant] || remedies.default;
+
+      // Simple reflection sentence
+      const reflection = `You felt ${dominant} today. That feeling guided your path.`;
+
+      document.getElementById("dominantEmotion").innerText = dominant;
+      document.getElementById("lastPossessor").innerText = (lastEntity === 'angel') ? "👼 Angel" : (lastEntity === 'devil') ? "😈 Devil" : "None";
+      document.getElementById("remedy").innerText = remedy;
+      document.getElementById("reflection").innerText = reflection;
+    }
+
+    window.onload = loadEcho;
+  </script>
+</body>
+</html>

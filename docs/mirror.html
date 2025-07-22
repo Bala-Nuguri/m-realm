@@ -1,27 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Mirror Vision</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2"></script>
-</head>
-<body style="background:#000;color:#00ffff;text-align:center;padding:2em;font-family:sans-serif;">
-  <button onclick="history.back()" style="position:absolute;top:15px;left:15px;background:#00ffff;color:#000;padding:0.5em 1em;border:none;border-radius:10px;font-weight:bold;">⬅ Back</button>
-  <h1>🪞 Mirror Face Detection</h1>
-  <video id="video" width="300" height="225" autoplay muted playsinline style="margin-top:2em;border:2px solid #00ffff;border-radius:10px;"></video>
-  <script>
-    Promise.all([
-      faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/models'),
-    ]).then(startVideo);
-
-    function startVideo() {
-      navigator.mediaDevices.getUserMedia({ video: {} })
-        .then(stream => {
-          const video = document.getElementById('video');
-          video.srcObject = stream;
-        });
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>M-realm Mirror - Working AI</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0b0b1e;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
     }
+
+    video {
+      border-radius: 12px;
+      width: 100%;
+      max-width: 480px;
+      margin-top: 20px;
+    }
+
+    #emotion {
+      margin-top: 20px;
+      font-size: 1.4em;
+      color: #ffcc99;
+    }
+
+    .back-button {
+      margin-top: 30px;
+    }
+
+    .back-button a {
+      color: #aadfff;
+      font-size: 1.1em;
+    }
+
+    .error {
+      color: #ff6666;
+      margin-top: 10px;
+    }
+  </style>
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+</head>
+<body>
+  <h1>🪞 M-realm Mirror</h1>
+  <video id="video" autoplay muted playsinline></video>
+  <div id="emotion">Loading camera and AI...</div>
+  <div id="error" class="error"></div>
+  <div class="back-button">
+    <a href="mrealm.html">🔙 Back to Realm</a>
+  </div>
+
+  <script>
+    const video = document.getElementById("video");
+    const emotionDisplay = document.getElementById("emotion");
+    const errorDisplay = document.getElementById("error");
+
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        emotionDisplay.textContent = "Camera started. Looking for your expression...";
+      } catch (err) {
+        errorDisplay.textContent = "❗ Cannot access camera. Please allow it in your browser.";
+        console.error("Camera error:", err);
+      }
+    }
+
+    async function loadModels() {
+      const MODEL_URL = "https://justadudewhohacks.github.io/face-api.js/models";
+      try {
+        emotionDisplay.textContent = "Loading AI models...";
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+        emotionDisplay.textContent = "Models loaded. Starting camera...";
+        startCamera();
+      } catch (modelError) {
+        errorDisplay.textContent = "❗ Failed to load face-api models.";
+        console.error("Model loading error:", modelError);
+      }
+    }
+
+    function getTopEmotion(expressions) {
+      return Object.entries(expressions)
+        .sort((a, b) => b[1] - a[1])[0][0];
+    }
+
+    async function detectExpression() {
+      try {
+        const result = await faceapi
+          .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+          .withFaceExpressions();
+        if (result && result.expressions) {
+          const top = getTopEmotion(result.expressions);
+          emotionDisplay.textContent = `You seem to be feeling: ${top}`;
+        } else {
+          emotionDisplay.textContent = "Looking for your face...";
+        }
+      } catch (err) {
+        console.error("Detection error:", err);
+        emotionDisplay.textContent = "Error detecting expression.";
+      }
+    }
+
+    video.addEventListener("playing", () => {
+      setInterval(detectExpression, 2000);
+    });
+
+    if (location.protocol === "file:") {
+      errorDisplay.textContent = "❗ This page may not work properly when opened from file://. Use localhost or upload online.";
+    }
+
+    loadModels();
   </script>
 </body>
 </html>
